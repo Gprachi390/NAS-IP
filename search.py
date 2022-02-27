@@ -118,7 +118,7 @@ def train(train_loader, valid_loader, model, architect, w_optim, alpha_optim, lr
     losses = utils.AverageMeter()
 
     cur_step = epoch*len(train_loader)
-    writer.add_scalar('train/lr', lr, cur_step)
+    # writer.add_scalar('train/lr', lr, cur_step)
 
     model.train()
 
