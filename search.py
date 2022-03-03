@@ -3,7 +3,7 @@ import os
 import torch
 import torch.nn as nn
 import numpy as np
-#from tensorboardX import SummaryWriter
+from tensorboardX import SummaryWriter
 from config import SearchConfig
 import utils
 from models.search_cnn import SearchCNNController
@@ -16,8 +16,8 @@ config = SearchConfig()
 device = torch.device("cuda")
 
 # tensorboard
-#writer = SummaryWriter(log_dir=os.path.join(config.path, "tb"))
-#writer.add_text('config', config.as_markdown(), 0)
+writer = SummaryWriter(log_dir=os.path.join(config.path, "tb"))
+writer.add_text('config', config.as_markdown(), 0)
 
 logger = utils.get_logger(os.path.join(config.path, "{}.log".format(config.name)))
 config.print_params(logger.info)
@@ -118,7 +118,7 @@ def train(train_loader, valid_loader, model, architect, w_optim, alpha_optim, lr
     losses = utils.AverageMeter()
 
     cur_step = epoch*len(train_loader)
-    # writer.add_scalar('train/lr', lr, cur_step)
+    writer.add_scalar('train/lr', lr, cur_step)
 
     model.train()
 
@@ -153,9 +153,9 @@ def train(train_loader, valid_loader, model, architect, w_optim, alpha_optim, lr
                     epoch+1, config.epochs, step, len(train_loader)-1, losses=losses,
                     top1=top1, top5=top5))
 
-#        writer.add_scalar('train/loss', loss.item(), cur_step)
-#        writer.add_scalar('train/top1', prec1.item(), cur_step)
-#        writer.add_scalar('train/top5', prec5.item(), cur_step)
+        writer.add_scalar('train/loss', loss.item(), cur_step)
+        writer.add_scalar('train/top1', prec1.item(), cur_step)
+        writer.add_scalar('train/top5', prec5.item(), cur_step)
         cur_step += 1
 
     logger.info("Train: [{:2d}/{}] Final Prec@1 {:.4%}".format(epoch+1, config.epochs, top1.avg))
@@ -188,9 +188,9 @@ def validate(valid_loader, model, epoch, cur_step):
                         epoch+1, config.epochs, step, len(valid_loader)-1, losses=losses,
                         top1=top1, top5=top5))
 
-#    writer.add_scalar('val/loss', losses.avg, cur_step)
-#    writer.add_scalar('val/top1', top1.avg, cur_step)
-#    writer.add_scalar('val/top5', top5.avg, cur_step)
+    writer.add_scalar('val/loss', losses.avg, cur_step)
+    writer.add_scalar('val/top1', top1.avg, cur_step)
+    writer.add_scalar('val/top5', top5.avg, cur_step)
 
     logger.info("Valid: [{:2d}/{}] Final Prec@1 {:.4%}".format(epoch+1, config.epochs, top1.avg))
 
